@@ -1,0 +1,24 @@
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_setup.py:_flush():81] Current SDK version is 0.22.0
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_setup.py:_flush():81] Configure stats pid to 87896
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_setup.py:_flush():81] Loading settings from /Users/shivanshu/.config/wandb/settings
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_setup.py:_flush():81] Loading settings from /Users/shivanshu/Documents/LIGO Research/ML4Seismic/wandb/settings
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_init.py:setup_run_log_directory():686] Logging user logs to runs/s4d/wandb/offline-run-20251030_195239-elnuw2al/logs/debug.log
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_init.py:setup_run_log_directory():687] Logging internal logs to runs/s4d/wandb/offline-run-20251030_195239-elnuw2al/logs/debug-internal.log
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_init.py:init():813] calling init triggers
+2025-10-30 19:52:39,555 INFO    MainThread:87896 [wandb_init.py:init():818] wandb.init called with sweep_config: {}
+config: {'_wandb': {}}
+2025-10-30 19:52:39,556 INFO    MainThread:87896 [wandb_init.py:init():861] starting backend
+2025-10-30 19:52:39,797 INFO    MainThread:87896 [wandb_init.py:init():864] sending inform_init request
+2025-10-30 19:52:39,890 INFO    MainThread:87896 [wandb_init.py:init():872] backend started and connected
+2025-10-30 19:52:39,893 INFO    MainThread:87896 [wandb_init.py:init():942] updated telemetry
+2025-10-30 19:52:39,907 INFO    MainThread:87896 [wandb_init.py:init():966] communicating run to backend with 90.0 second timeout
+2025-10-30 19:52:40,006 INFO    MainThread:87896 [wandb_init.py:init():1017] starting run threads in backend
+2025-10-30 19:52:40,229 INFO    MainThread:87896 [wandb_run.py:_console_start():2506] atexit reg
+2025-10-30 19:52:40,229 INFO    MainThread:87896 [wandb_run.py:_redirect():2354] redirect: wrap_raw
+2025-10-30 19:52:40,229 INFO    MainThread:87896 [wandb_run.py:_redirect():2423] Wrapping output streams.
+2025-10-30 19:52:40,229 INFO    MainThread:87896 [wandb_run.py:_redirect():2446] Redirects installed.
+2025-10-30 19:52:40,231 INFO    MainThread:87896 [wandb_init.py:init():1057] run started, returning control to user process
+2025-10-30 19:52:40,463 INFO    MainThread:87896 [wandb_run.py:_config_callback():1392] config_cb None None {'input_size': 15, 'd_model': 256, 'n_layers': 6, 'd_state': 64, 'dropout': 0.1, 'output_size': 6, 'learning_rate': 0.001, 'prenorm': True, '_instantiator': 'lightning.pytorch.cli.instantiate_module', 'time': 1381528818, 'seq_length': 240, 'predict_horizon': 4, 'normalize': True, 'batch_size': 32, 'num_workers': 4, 'pin_memory': True, 'data_dir': 'data'}
+2025-10-30 19:55:26,235 INFO    wandb-AsyncioManager-main:87896 [service_client.py:_forward_responses():84] Reached EOF.
+2025-10-30 19:55:26,235 INFO    wandb-AsyncioManager-main:87896 [mailbox.py:close():137] Closing mailbox, abandoning 0 handles.

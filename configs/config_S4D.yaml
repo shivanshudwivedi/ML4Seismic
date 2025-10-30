@@ -1,52 +1,102 @@
+seed_everything: 42
+
 trainer:
-  accelerator: auto
-  default_root_dir: 'runs/test/'
+  # Device configuration
+  accelerator: auto  # Automatically selects GPU if available
+  
+  # Output directory for logs and checkpoints
+  default_root_dir: 'runs/s4d/'
+  
+  # Training configuration
+  max_epochs: 200
+  log_every_n_steps: 10
+  
+  # Gradient clipping (helps with training stability)
+  gradient_clip_val: 1.0
+  
+  # Callbacks
   callbacks:
+    # Save best models based on validation loss
     - class_path: lightning.pytorch.callbacks.ModelCheckpoint
       init_args:
         monitor: val/loss
         mode: min
-        save_last: true
+        save_top_k: 3  # Keep top 3 models
+        save_last: true  # Also save the last checkpoint
+        filename: 'epoch{epoch:02d}-val_loss{val/loss:.4f}'
+        auto_insert_metric_name: false
+    
+    # Early stopping to prevent overfitting
     - class_path: lightning.pytorch.callbacks.EarlyStopping
       init_args:
         monitor: val/loss
-        patience: 5
+        patience: 20  # S4D may need more patience due to slower convergence initially
         mode: min
+        min_delta: 0.0001  # Minimum change to qualify as improvement
+    
+    # Learning rate monitor
+    - class_path: lightning.pytorch.callbacks.LearningRateMonitor
+      init_args:
+        logging_interval: epoch
+  
+  # Logger configuration
   logger:
     class_path: lightning.pytorch.loggers.WandbLogger
-  log_every_n_steps: 1
-  max_epochs: 80
+    init_args:
+      project: gs13-prediction
+      name: s4d-15-to-6-forecast
+      save_dir: runs/
 
+# ============================================================================
+# Data Configuration
+# ============================================================================
 data:
-  class_path: data.LitDataModule
+  class_path: data.GS13DataModule
   init_args:
-    time: 1381528818 
-    kernel: 60.0
-    stride: 1.0
+    time: 1381528818
+    seq_length: 240  # 120 seconds at 4 Hz - Was 60
+    predict_horizon: 4  # Predict 1 second (4 timesteps) ahead
+    
+    normalize: True 
+    
     batch_size: 32
-    num_workers: 1
+    num_workers: 4
+    pin_memory: true  # Faster data transfer to GPU
+    data_dir: data  # Directory containing preprocessed .npy files
 
+# ============================================================================
+# Model Configuration
+# ============================================================================
+model:
+  class_path: model.S4DForecast
+  init_args:
+    input_size: 15  # All 15 channels are inputs
+    d_model: 256  # Model dimension (similar to LSTM hidden_size) Was 128
+    n_layers: 6  # Number of S4D layers Was 4
+    d_state: 64  # State dimension for S4D
+    dropout: 0.1  # Dropout for regularization
+    output_size: 6  # Predicting all 6 GS13 channels
+    learning_rate: 1e-3  # Initial learning rate
+    prenorm: true  # Use post-normalization - Was false
+
+# ============================================================================
+# Optimizer Configuration
+# ============================================================================
 optimizer:
   class_path: torch.optim.AdamW
   init_args:
-    lr: 1e-2
+    lr: 1e-3  # Initial learning rate
+    weight_decay: 1e-5  # L2 regularization (lighter than LSTM due to S4D's inherent regularization)
+    betas: [0.9, 0.999]  # Adam beta parameters
 
+# ============================================================================
+# Learning Rate Scheduler Configuration
+# ============================================================================
 lr_scheduler:
-  class_path: torch.optim.lr_scheduler.ExponentialLR
+  class_path: lightning.pytorch.cli.ReduceLROnPlateau
   init_args:
-    gamma: 0.99
-    
-model:
-  class_path: model.LitModel
-  init_args:
-    d_input: &d_input 9
-    d_output: &d_output 1
-    encoder:
-        class_path: models.networks.S4DModel
-        init_args: 
-           d_input: *d_input
-           d_output: *d_output
-           d_model: 4
-           n_layers: 2
-           dropout: 0.0
-           prenorm: False
+    monitor: val/loss
+    mode: min
+    factor: 0.5  # Reduce LR by half when validation loss plateaus
+    patience: 10  # Wait 10 epochs before reducing
+    min_lr: 1e-6  # Minimum learning rate
